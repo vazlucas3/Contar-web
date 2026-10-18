@@ -46,7 +46,8 @@ setErroApi(null)
 
 try {
     await categoriaService.salvar({ nome: nomeLimpo })
-    navegar(CAMINHOS.categorias)
+    // Volta para a lista levando uma mensagem de sucesso (a página Categorias a exibe).
+    navegar(CAMINHOS.categorias, { state: { mensagem: 'Categoria criada com sucesso.' } })
 } catch (e) {
     setErroApi(e instanceof ErroApi ? e.message : 'Não foi possível salvar a categoria.')
     setSalvando(false)

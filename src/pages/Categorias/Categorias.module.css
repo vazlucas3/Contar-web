@@ -1,11 +1,10 @@
-/* Categorias.module.css */
-.mensagem { color: var(--texto-suave); text-align: center; }
+.mensagem {
+color: var(--texto-suave);
+text-align: center;
+}
 
-.erro {
-display: flex; align-items: center; justify-content: space-between;
-gap: var(--espaco-3); flex-wrap: wrap;
-margin-bottom: var(--espaco-3); padding: var(--espaco-3);
-border: 1px solid var(--vermelho); border-radius: var(--raio-campo);
-background: color-mix(in srgb, var(--vermelho) 8%, var(--superficie));
-color: var(--vermelho);
+/* Campo de busca acima da tabela */
+.busca {
+max-width: 360px;
+margin-bottom: var(--espaco-3);
 }
