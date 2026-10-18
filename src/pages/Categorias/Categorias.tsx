@@ -1,24 +1,50 @@
-import { Link } from 'react-router-dom'
-import { EmConstrucao, PageHeader } from '@/components/common'
+import { useNavigate } from 'react-router-dom'
+import { Button, Card, PageHeader } from '@/components/common'
 import { useTituloPagina } from '@/hooks/useTituloPagina'
 import { CAMINHOS } from '@/routes/caminhos'
+import type { CategoriaResponse } from '@/types'
+import { TabelaCategorias } from './components/TabelaCategorias'
+import { useCategorias } from './useCategorias'
+import estilos from './Categorias.module.css'
 
-/* ------------------------------------------------------------------
- * PÁGINA: Categorias  (rota: /categorias)
- * STATUS: esqueleto — seção 4.9 do documento de design.
- *
- * O que falta implementar:
- *  - tabela Nome · Tipo · Cor · Ações e exclusão com confirmação.
- * Atenção: a API (CategoriaResponseDTO) só devolve id, nome e usuarioId — não há
- * "tipo" nem "cor". Alinhar com o time da API antes de exibir essas colunas.
- * ------------------------------------------------------------------ */
 export function Categorias() {
   useTituloPagina('Categorias')
 
+  const navegar = useNavigate()
+  const { categorias, carregando, erro, tentarNovamente, excluir } = useCategorias()
+
+  /* Pede confirmação antes de excluir. */
+  function aoExcluir(categoria: CategoriaResponse) {
+    if (window.confirm(`Excluir a categoria "${categoria.nome}"?`)) {
+      void excluir(categoria.id)
+    }
+  }
+
   return (
     <>
-      <PageHeader titulo="Categorias" acao={<Link to={CAMINHOS.novaCategoria}>+ Nova categoria</Link>} />
-      <EmConstrucao descricao="Listagem de categorias." />
+      <PageHeader
+        titulo="Categorias"
+        acao={<Button onClick={() => navegar(CAMINHOS.novaCategoria)}>+ Nova categoria</Button>}
+      />
+
+      {/* Mensagem de erro (carregar ou excluir) */}
+      {erro && (
+        <div className={estilos.erro} role="alert">
+          <span>{erro}</span>
+          <Button variante="secundario" onClick={tentarNovamente}>
+            Tentar novamente
+          </Button>
+        </div>
+      )}
+
+      {/* Estados da lista: carregando, vazia ou com dados */}
+      {carregando ? (
+        <Card><p className={estilos.mensagem}>Carregando categorias...</p></Card>
+      ) : categorias.length === 0 && !erro ? (
+        <Card><p className={estilos.mensagem}>Nenhuma categoria cadastrada ainda.</p></Card>
+      ) : (
+        <TabelaCategorias categorias={categorias} aoExcluir={aoExcluir} />
+      )}
     </>
   )
 }
